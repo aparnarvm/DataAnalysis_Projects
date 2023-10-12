@@ -1,0 +1,119 @@
+---
+title: "IRIS Exploratory Data  Analysis"
+author: "Aparna RVM"
+date: "2023-10-12"
+output: html_document
+---
+This is a basic Exploratory Data Analysis on the one and only Iris Dataset - my first mini project in R.  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I downloaded the Iris Flower dataset from Kaggle.
+
+
+```{r}
+library(tidyverse)
+
+data = read.csv('IRIS.csv')
+```
+
+Let's start analysing the data.
+
+```{r}
+str(data)
+subset(data, species == 'Iris-setosa')[1:8,]
+```
+
+```{r}
+summary(data)
+```
+
+Now I'm checking for any missing values in the data.
+
+```{r}
+missing_values <- sum(is.na(data))
+print(paste("Number of Missing Values:", missing_values))
+```
+
+There are no missing values in the dataset.
+
+
+
+Univariate Analysis 
+
+Histogram for Sepal Length
+
+```{r}
+ggplot(data, aes(x = sepal_length)) + 
+  geom_histogram(binwidth = 0.2, fill = "blue", color = "black") +
+  labs(title = "Distribution of Sepal Length")
+```
+
+
+This is a histogram that visualizes the distribution of sepal lengths in the dataset. Each bar in the histogram represents a range of sepal lengths.The height of the bar corresponds to the frequency or count of observations falling within that range.
+
+
+
+Bivariate Analysis 
+
+Scatter plot for Sepal Length vs. Sepal Width
+
+```{r} 
+ggplot(data, aes(x = sepal_length, y = sepal_width, color = species)) + 
+  geom_point() +
+  labs(title = "Scatter Plot of Sepal Length vs. Sepal Width")
+```
+
+This is a scatter plot that visualizes the relationship between sepal length and sepal width. Each point in the plot represents an observation in the dataset. The color of the points distinguishes different species. 
+
+
+
+Multivariate Analysis 
+
+Boxplot for all numeric variables
+
+
+```{r}
+ggplot(data, aes(x = species, y = sepal_length, fill = species)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Sepal Length by Species")
+```
+
+
+Another Boxplot
+
+```{r}
+ggplot(data, aes(x = species, y = sepal_width, fill = species)) +
+  geom_boxplot() +
+  facet_wrap(~petal_width, scales = "free_y") +
+  labs(title = "Boxplot of Sepal Width by Species and Petal Width")
+```
+
+Here is a faceted boxplot that allows us to compare the distribution of sepal widths among different species for various levels of petal width. Each boxplot corresponds to a species and a specific petal width - provides a summary of the central tendency and spread of the "sepal_width" variable within each category. 
+
+
+Scatterplot
+
+
+```{r}
+pairs(data[, 1:4], col = as.integer(data$petal_length), pch = 16, main = "Scatterplot Matrix with Color Gradient")
+```
+
+
+This is a scatterplot matrix where each point represents an observation in the dataset. The color of the points is determined by the "petal_length" variable - creates a color gradient. 
+
+
+And at last a Correlation Matrix.
+
+```{r}
+cor_matrix <- cor(data[, 1:4])
+print(cor_matrix)
+```
+
+
+
+So that was it!
+
+Will be back with another project soon.
