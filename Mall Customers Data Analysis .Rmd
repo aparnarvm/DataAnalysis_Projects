@@ -1,0 +1,194 @@
+---
+title: "Mall Customers Data Analysis"
+author: "Aparna RVM"
+date: "2023-10-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Installing packages
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+data = read.csv('Mall_Customers.csv')
+```
+The dataset contains 200 rows and 5 columns.
+The 5 variables are CustomerID, Genre(Gender?), Age, Annual Income and Spending score of the customers in a Mall.
+
+```{r}
+str(data)
+subset(data, Genre == 'Female')[1:20,]
+```
+
+```{r}
+summary(data)
+```
+
+We can see that the minimum age of the customers is 18.
+The customer's Annual income range from 15k to 137k.
+
+
+Checking for the missing values
+
+```{r}
+missing_values <- sum(is.na(data))
+print(paste("Number of Missing Values:", missing_values))
+```
+There are no missing values in the dataset.
+
+
+
+So lets proceed with our analysis
+
+
+Customer Segmentation using K means Clustering.
+
+```{r}
+set.seed(123)  # for reproducibility
+customer_data <- read.csv("Mall_Customers.csv")
+features <- customer_data[, c("Spending.Score..1.100.", "Annual.Income..k..")]
+scaled_features <- scale(features)
+```
+
+Performing K-means clustering (e.g., with k=3)
+
+```{r}
+kmeans_result <- kmeans(scaled_features, centers = 3)
+cluster_assignments <- kmeans_result$cluster
+```
+
+
+K-means is an unsupervised ML algorithm used for clustering a dataset into K distinct, non-overlapping clusters.The goal of the K-means algorithm is to group data points into clusters based on similarity, with each cluster represented by its centroid.
+
+
+
+Cluster analysis
+
+```{r}
+customer_data$Cluster <- cluster_assignments
+```
+
+Demographics Analysis
+
+```{r}
+demographic_analysis <- customer_data %>%
+  group_by(Cluster, Genre) %>%
+  summarise(Count = n()) %>%
+  ungroup()
+```
+
+Bar Plot of Gender Distribution in Each Cluster
+
+```{r}
+ggplot(demographic_analysis, aes(x = as.factor(Cluster), y = Count, fill = Genre)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Gender Distribution in Each Cluster", x = "Cluster", y = "Count") +
+  theme_minimal()
+```
+
+
+The bar plot illustrates the gender distribution within each cluster. It is evident that Cluster 1 has slightly higher proportion of females, Cluster 2 has a balanced representation of both genders, while Cluster 3 has a fairly higher proportion of females. 
+
+
+Stacked Bar Plot of Age Group Distribution in Each Cluster
+
+```{r}
+ggplot(customer_data, aes(x = as.factor(Cluster), fill = Age, group = Age)) +
+  geom_bar() +
+  labs(title = "Age Group Distribution in Each Cluster", x = "Cluster", y = "Count") +
+  theme_minimal()
+```
+
+
+This stacked bar plot breaks down the age group distribution within each cluster. The height of the bar indicates the total count of customers in each cluster, and the segments within the bar show the distribution of customers across age groups.
+
+Cluster 3 is showing a higher total count of customers, with a significantly higher population of young people ranging from age 20-30. It may be worthwhile to tailor promotions or products to appeal to a younger audience in Cluster 3.
+
+
+```{r}
+print(demographic_analysis)
+```
+
+
+
+Scatter plot
+
+```{r}
+ggplot(customer_data, aes(x = Annual.Income..k.., y = Spending.Score..1.100., color = as.factor(Cluster))) +
+  geom_point() +
+  labs(title = "Customer Segmentation", x = "Annual Income", y = "Spending Score") +
+  theme_minimal()
+```
+
+
+The scatter plot illustrates the relationship between customers' annual income and spending score, color-coded by the identified clusters. Cluster 1 who has a lower annual income is showing a low spending score. Cluster 2 also shows a lower spending score even though their annual income is high. Cluster 3 tends to have higher spending scores, both among customers with higher as well as lower annual income. Cluster 3 might be a potential high-value customer segment.
+
+
+
+Boxplot
+
+```{r}
+ggplot(customer_data, aes(x = Genre, y = Spending.Score..1.100., fill = Genre)) +
+  geom_boxplot() +
+  labs(title = "Spending Score by Genre", x = "Genre", y = "Spending Score") +
+  theme_minimal()
+```
+
+This boxplot compares the distribution of spending scores between genders. It shows that while the median spending scores are similar for both genders, there is greater variability among male customers.
+
+
+
+Histogram
+
+```{r}
+ggplot(customer_data, aes(x = Annual.Income..k.., fill = as.factor(Cluster))) +
+  geom_histogram(binwidth = 5000, position = "identity", alpha = 0.7) +
+  labs(title = "Distribution of Annual Income", x = "Annual Income", y = "Frequency") +
+  theme_minimal()
+```
+
+
+
+Violin plot
+
+```{r}
+ggplot(customer_data, aes(x = as.factor(Cluster), y = Spending.Score..1.100., fill = as.factor(Cluster))) +
+  geom_violin() +
+  labs(title = "Spending Score Distribution by Cluster", x = "Cluster", y = "Spending Score") +
+  theme_minimal()
+```
+
+
+The violin plot provides a detailed view of spending score distributions within each cluster. Notably, Cluster 1 has a population of customers with relatively low spending scores, the highest being below 50. Cluster 2 include a much more wider range of customer spending score, more number of people with lower spending score, yet peaks towards higher values, indicating a more diverse spending behavior compared to the other clusters.
+Cluster 3 is a group predominantly of customers with higher spending scores with lowest score being around 40 till all the way up to about 100.
+
+
+
+Faceted Scatter plot
+
+```{r}
+ggplot(customer_data, aes(x = Annual.Income..k.., y = Spending.Score..1.100., color = as.factor(Cluster))) +
+  geom_point() +
+  facet_wrap(~Cluster, scales = "free") +
+  labs(title = "Customer Segmentation", x = "Annual Income", y = "Spending Score") +
+  theme_minimal()
+```
+
+
+This faceted scatter plot showcases spending score against annual income for each cluster separately. It helps in visually discerning the distinct spending behaviors within each cluster.
+
+
+
+
+
+
+
+Okay, that's it for today!
+
