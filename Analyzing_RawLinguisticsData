@@ -11,7 +11,11 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this project, I will try to analyze a raw dataset - 'Hindiwordsraw'. The dataset contains hindi words and the details such as its syllable length, lexical form, word length etc. <br>
+
+
+
+In this project, I will try to analyze a raw dataset - 'hnd1_aswords_stats'. The dataset contains hindi words and the details such as its syllable length, lexical form, word length etc. <br>
+
 
 Let's explore the data!
 
@@ -55,7 +59,7 @@ First, I will subset this data frame to only include the following columns
 
 
 ```{r}
-dat <- read.table("C:\\Users\\RVM\\Downloads\\drive-download-20231119T124854Z-001\\Hindiwordsraw", header = TRUE)
+dat <- read.table("C:\\Users\\RVM\\Downloads\\drive-download-20231119T124854Z-001\\hnd1_aswords_stats", header = TRUE)
 dat_subset <- dat[, c("item", "roi", "syll_len", "word_lex", "word_complex", "word_freq", "word_bifreq", "word_len")]
 ```
 
@@ -70,28 +74,39 @@ summary(dat_subset)
 head(dat_subset)
 ```
 
+
+
 ### With the reduced data set, Extract all the words that have syllable length more than 5
 
 ```{r}
 sl_more5 <- dat_subset[dat_subset$syll_len > 5, ]
-head(sl_more5)
+print(sl_more5) 
 ```
+
+Here we have the whole row, now let us extract out only the words that have syllable length more than 5.
+
+```{r}
+
+#The words with syllable length more than 5 are:
+sl_more5_words <- dat_subset$word_lex[dat_subset$syll_len > 5]
+print(sl_more5_words)
+```
+
+
  
 ### Extract all the words that have a syllable length of more than 5 and have a frequency of more than 100
 
 ```{r}
 sl_more5_and_freq100 <- dat_subset[dat_subset$syll_len > 5 & dat_subset$word_freq > 100, ]
-head(sl_more5_and_freq100)
+print(sl_more5_and_freq100)
 ```
-
-
-
-### Extract all words with word complexity equal to 0 and word bigram frequency of more than 20
+Here is the whole row, next extracting out only the words.
 
 ```{r}
-c0_bifreq20 <- dat_subset[dat_subset$word_complex == 0 & dat_subset$word_bifreq > 20, ]
-c0_bifreq20
+sl_more5_and_freq100_words <- dat_subset$word_lex[dat_subset$syll_len > 5 & dat_subset$word_freq > 100]
+print(sl_more5_and_freq100_words)
 ```
+
 
 
 ### How many unique words exist in the dataset?
@@ -110,16 +125,35 @@ head(unique_words,15)
 ```
 
 
+### Extract all words with word complexity equal to 0 and word bigram frequency of more than 20
+
+```{r}
+c0_bifreq20_words <- dat_subset$word_lex[dat_subset$word_complex == 0 & dat_subset$word_bifreq > 20 ]
+print(c0_bifreq20_words)
+```
+
+```{r}
+unique(c0_bifreq20_words)
+```
+We just need the words that are unique with word complexity equal to 0 and word bigram frequency of more than 20. This is giving me 263 elements, that too with repetition. I just need the unique words, so I'm extracting only the unique elements, without repetition. But still this is giving me the hindi word break '|' which is not a word. Let me remove that as well.
+```{r}
+c0_bifreq20_words <- gsub("\\।", "", c0_bifreq20_words)  # Remove '।'
+unique(c0_bifreq20_words)
+```
+Here I removed '।' but still there is a "" in its place, which I have to find a way to remove.
+
 ### Is there a correlation between word frequency and syllable length?
 
 Correlation analysis (removing missing values)
+
 
 ```{r}
 subset_complete <- dat_subset[complete.cases(dat_subset$word_freq, dat_subset$syll_len), ]
 cor(subset_complete$word_freq, subset_complete$syll_len)
 
 ```
-
+We know the correlation score ranges from -1 to 1, here the score -0.62(approx) indicates a moderate negative linear relationship between the variables word frequency and syllable length.
+That means,as the word frequency (word_freq) increases, there's a tendency for the syllable length (syll_len) to decrease, and vice versa, with a moderate degree of correlation between them.
 
 ## Let's do some plotting!
 
@@ -133,7 +167,7 @@ library(ggplot2)
 
 Histogram
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(dat_subset, aes(x = syll_len)) +
   geom_histogram(binwidth = 1, fill = "darkgreen", color = "white") +
   labs(title = "Distribution of Syllable Lengths", x = "Syllable Length", y = "Frequency")
@@ -151,7 +185,7 @@ Frequency in y axis and syllable length in x axis, this histogram shows us the d
 Scatter plot :<br>
 A scatter plot is a useful visualization when exploring the relationship between two continuous variables.
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(dat_subset, aes(x = word_freq, y = word_len)) +
   geom_point(color = "darkgreen") +
   labs(title = "Word Frequency vs Word Length", x = "Word Frequency", y = "Word Length")
@@ -165,7 +199,7 @@ Here we can see that, words which have lesser word length, are used more frequen
 
 To check the trend between two variables, let's use a Scatter plot with a trend line(or line of best fit). The relationship between variables can be described in many ways: positive, negative, strong or weak, linear or non-linear.
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(dat_subset, aes(x = word_freq, y = word_bifreq)) +
   geom_point(color = "darkgreen") +
   geom_smooth(method = "lm", se = FALSE, color = "black") +
@@ -180,10 +214,11 @@ This plot shows that there is a relationship between the word bigram frequency(y
 
 ### How does word complexity vary across different sentence items?
 
+
 Boxplot
 
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(dat_subset, aes(x = factor(item), y = word_complex)) +
   geom_boxplot(fill = "darkgreen", color = "black") +
   labs(title = "Word Complexity Across Sentence Items", x = "Sentence Item", y = "Word Complexity")
@@ -191,6 +226,13 @@ ggplot(dat_subset, aes(x = factor(item), y = word_complex)) +
 ```
 
 
+This was my attempt to analyze a raw linguistic data containing syll_length, word_lex, word_complex, word_freq, word_len etc. First I subsetted the data to include only those columns that I want. Then on this subsetted dataset, I tried to extract out the data that I need to answer some questions. <br>
+After that, I tried to plot a few graphs- a histogram for the distribution of syllable lengths, scatter plot for understanding the relation between word frequency and word length, a scatter plot with trend line for understanding the relation between word frequency and word bigram frequency, and a boxplot to understand word complexity across sentence items.
+
+
 That was it! Thank you!
+
+
+
 
 
