@@ -6,8 +6,9 @@ This repository contains my exploratory data analysis projects using R. All sour
 - [IRIS Dataset Analysis](http://rpubs.com/aparna_rvm/1097907)
 
 ### Skills : 
-R Programming Language
-Dala Analysis
-Data Visualization
+R Programming Language <br>
+Data Analysis <br>
+Data Visualization <br>
 ### Tools Used : 
-RStudio, RPubs
+RStudio <br>
+RPubs
