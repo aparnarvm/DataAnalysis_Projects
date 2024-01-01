@@ -7,10 +7,12 @@ This repository contains my exploratory data analysis projects using R. All sour
 
 ### Skills : 
 R Programming Language <br>
+SQL <br>
 Data Analysis <br>
 Data Visualization <br>
-Tableau visualization <br>
 ### Tools Used : 
 RStudio <br>
+MySQL <br>
 Tableau <br>
+Power BI <br>
 RPubs
