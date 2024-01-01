@@ -1,4 +1,4 @@
-# DataAnalysis_with_R
+# DataAnalysis_Projects
 This repository contains my exploratory data analysis projects using R. All source code can be found here.
 
 - [Analyzing Raw Linguistic Data](http://rpubs.com/aparna_rvm/1123594)
@@ -9,6 +9,7 @@ This repository contains my exploratory data analysis projects using R. All sour
 R Programming Language <br>
 Data Analysis <br>
 Data Visualization <br>
+Tableau visualization <br>
 ### Tools Used : 
 RStudio <br>
 Tableau <br>
