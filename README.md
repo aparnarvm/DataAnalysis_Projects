@@ -1,5 +1,7 @@
 # DataAnalysis_Projects
-This repository contains my exploratory data analysis projects using R. All source code can be found here.
+This repository contains my exploratory data analysis projects. <br>
+
+All source code for R can be found here.<br>
 
 - [Analyzing Raw Linguistic Data](http://rpubs.com/aparna_rvm/1123594)
 - [Mall Customers Data Analysis](http://rpubs.com/aparna_rvm/1098780)
@@ -7,6 +9,7 @@ This repository contains my exploratory data analysis projects using R. All sour
 
 ### Skills : 
 R Programming Language <br>
+Python<br>
 SQL <br>
 Data Analysis <br>
 Data Visualization <br>
